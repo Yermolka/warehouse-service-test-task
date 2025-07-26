@@ -1,0 +1,100 @@
+name: "warehouse"
+
+services:
+  app:
+    depends_on:
+      - kafka
+      - postgres
+      - redis
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=true
+      - NUM_CONSUMERS=3
+      - KAFKA_TOPIC_NAME=movements
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_TOPIC=movements
+      - KAFKA_GROUP_ID=warehouse
+      - KAFKA_CONSUMER_TIMEOUT=10000
+      - KAFKA_CONSUMER_AUTO_OFFSET_RESET=earliest
+      - KAFKA_CONSUMER_ENABLE_AUTO_COMMIT=false
+      - KAFKA_CONSUMER_MAX_POLL_RECORDS=100
+      - KAFKA_CONSUMER_MAX_POLL_INTERVAL_MS=3000
+      - KAFKA_CONSUMER_SESSION_TIMEOUT_MS=10000
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_DB=warehouse
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - ./app:/warehouse/app
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.7.0
+    ports:
+      - "2181:2181"
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=2181
+      - ZOOKEEPER_TICK_TIME=2000
+
+  kafka:
+    image: confluentinc/cp-kafka:7.7.0
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+
+  postgres:
+    image: postgres:17
+    shm_size: 1g
+    command: postgres -c config_file=/etc/postgresql.conf
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=warehouse
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./configs/postgresql.conf:/etc/postgresql.conf
+
+  redis:
+    image: redis:7.4
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis-data:/data
+    environment:
+      - REDIS_PASSWORD=redis
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./configs/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./configs/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
+      - ./configs/dashboard.json:/var/lib/grafana/dashboards/dashboard.json
+
+
+volumes:
+  postgres-data:
+  redis-data:

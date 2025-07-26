@@ -1,0 +1,8 @@
+{
+  "python.analysis.ignore": ["__pypackages__/**/*.py"],
+  "python.analysis.extraPaths": ["app"],
+  "python.analysis.typeCheckingMode": "basic",
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+}

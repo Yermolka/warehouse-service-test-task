@@ -1,0 +1,15 @@
+[tool.ruff]
+line-length = 128
+src = ["app"]
+
+# Enable Pyflakes `E` and `F` codes by default.
+[tool.ruff.lint]
+select = ["E", "F"]
+
+# Exclude a variety of commonly ignored directories.
+exclude = [".git", ".ruff_cache", "*.egg-info", "__pypackages__", "**/*_pb2.py", "**/*_pb2.pyi", "**/*_pb2_grpc.py",]
+
+[project]
+name = "warehouse-app"
+version = "0.0.1"
+requires_python = ">=3.12"

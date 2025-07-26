@@ -1,0 +1,237 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+      "title": "Warehouse API",
+      "version": "0.0.1"
+    },
+    "paths": {
+      "/health/": {
+        "get": {
+          "summary": "Get Health",
+          "operationId": "get_health_health__get",
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+  
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/metrics/": {
+        "get": {
+          "summary": "Get Consumer Metrics",
+          "operationId": "get_consumer_metrics_metrics__get",
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+  
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/movements/{movement_id}": {
+        "get": {
+          "summary": "Get Movement",
+          "operationId": "get_movement_api_movements__movement_id__get",
+          "parameters": [
+            {
+              "name": "movement_id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "title": "Movement Id"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/MovementPublic"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/api/warehouses/{warehouse_id}/products/{product_id}": {
+        "get": {
+          "summary": "Get Warehouse Product",
+          "operationId": "get_warehouse_product_api_warehouses__warehouse_id__products__product_id__get",
+          "parameters": [
+            {
+              "name": "warehouse_id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "title": "Warehouse Id"
+              }
+            },
+            {
+              "name": "product_id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "title": "Product Id"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful Response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/_Response"
+                  }
+                }
+              }
+            },
+            "422": {
+              "description": "Validation Error",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/HTTPValidationError"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "HTTPValidationError": {
+          "properties": {
+            "detail": {
+              "items": {
+                "$ref": "#/components/schemas/ValidationError"
+              },
+              "type": "array",
+              "title": "Detail"
+            }
+          },
+          "type": "object",
+          "title": "HTTPValidationError"
+        },
+        "MovementPublic": {
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Id"
+            },
+            "warehouse_id_from": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Warehouse Id From",
+              "default": "00000000-0000-0000-0000-000000000000"
+            },
+            "warehouse_id_to": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Warehouse Id To",
+              "default": "00000000-0000-0000-0000-000000000000"
+            },
+            "product_id": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Product Id",
+              "default": "00000000-0000-0000-0000-000000000000"
+            },
+            "time_diff": {
+              "type": "number",
+              "title": "Time Diff"
+            },
+            "quantity_diff": {
+              "type": "integer",
+              "title": "Quantity Diff"
+            }
+          },
+          "type": "object",
+          "required": [
+            "id",
+            "time_diff",
+            "quantity_diff"
+          ],
+          "title": "MovementPublic"
+        },
+        "ValidationError": {
+          "properties": {
+            "loc": {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ]
+              },
+              "type": "array",
+              "title": "Location"
+            },
+            "msg": {
+              "type": "string",
+              "title": "Message"
+            },
+            "type": {
+              "type": "string",
+              "title": "Error Type"
+            }
+          },
+          "type": "object",
+          "required": [
+            "loc",
+            "msg",
+            "type"
+          ],
+          "title": "ValidationError"
+        },
+        "_Response": {
+          "properties": {
+            "quantity": {
+              "type": "integer",
+              "title": "Quantity"
+            }
+          },
+          "type": "object",
+          "required": [
+            "quantity"
+          ],
+          "title": "_Response"
+        }
+      }
+    }
+  }
