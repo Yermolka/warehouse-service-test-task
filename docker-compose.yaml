@@ -6,6 +6,7 @@ services:
       - kafka
       - postgres
       - redis
+    restart: unless-stopped
     build:
       context: .
       dockerfile: Dockerfile
@@ -90,9 +91,6 @@ services:
     image: grafana/grafana:latest
     ports:
       - "3000:3000"
-    volumes:
-      - ./configs/dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml
-      - ./configs/dashboard.json:/var/lib/grafana/dashboards/dashboard.json
 
 
 volumes:
